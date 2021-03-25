@@ -5,6 +5,31 @@
   
   <entry>
     <title>VMWare配置多节点环境</title>
+    <link href="/2021/03/25/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <url>/2021/03/25/Docker%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+    
+    <content type="html"><![CDATA[<p>Docker介绍：<a href="https://blog.csdn.net/xc_zhou/article/details/80952307">https://blog.csdn.net/xc_zhou/article/details/80952307</a></p><p>Docker镜像的构成和定制：<a href="https://blog.csdn.net/weixin_33730836/article/details/91775073">https://blog.csdn.net/weixin_33730836/article/details/91775073</a></p><p>Docker镜像源修改：<a href="https://blog.csdn.net/jixuju/article/details/80158493">https://blog.csdn.net/jixuju/article/details/80158493</a></p><ol><li>CentOS下安装 yum docker install (Ubuntu下使用脚本安装：1.curl -fsSL get.docker.com -o get-docker.sh<br> 2.sh get-docker.sh –mirror Aliyun)</li><li>升级内核 yum update</li><li>启动、停止docker服务 systemctl start/stop docker</li><li>设为开机启动 systemctl enable docker</li><li>版本查看 docker -v</li><li>寻找镜像 docker search xxx</li><li>拉取镜像 docker pull xxx(:tags)</li><li>查看本地所有镜像 docker images</li><li>删除指定镜像 docker rmi image-id</li><li>生成容器 docker run –name container-name -d image-name（-d代表后台运行）</li></ol><p>运行一个Redis容器:  <strong>docker run –name docker01 -d -p 6379:6379 docker-id</strong></p><ol><li><p>查看运行中(所有)容器 docker ps (-a)</p></li><li><p>启动，停止容器 docker start/stop container-name/id</p></li><li><p>重启容器 docker restart container-name/id</p></li><li><p>删除容器 docker rm container-name/id   强行删除运行中的容器 docker rm -f container-name/id  Docker会先发送SIGKILL信号给容器，终止其中的应用，然后强行删除</p></li><li><p>删除所有未运行状态的容器 docker container prune</p></li><li><p>端口映射 docker run –name container-name -d -p 8888:8080 image-name(将主机的8888端口映射到docker容器的8080端口)</p></li><li><p>关闭防火墙 systemctl firewalld stop</p></li><li><p>-i 表示启动一个可交互的容器(启动一个Ubuntu系统) 例如 docker run -i -t ubuntu /bin/bash 进入容器交互模式</p></li><li><p>-rm 容器运行结束后就自动销毁，即工具型容器</p></li><li><p>docker push 上传镜像</p></li><li><p>docker attach container-id 连接容器</p></li><li><p>以交互的方式进入容器并修改容器的内容：docker exec -it container-name/id bash</p></li><li><p>以交互的方式启动一个容器：docker run -it –rm image-name bash</p></li><li><p>使用Dockerfile定制镜像：Docker build [选项] &lt;上下文路径&gt; ：</p></li><li><ol><li>将Dockerfile文件放在一个空目录下，或者项目根目录下。如果该目录下没有所需文件，应将文件复制一份过来</li></ol></li><li><p>编写Dockerfile文件：</p></li><li><ol><li>FROM 指定基础镜像，且必须以FROM开头</li><li>RUN 指定脚本命令 一个RUN创建一层镜像，定义每一层如何创建，每一个RUN都是启动一个容器、执行命令、然后提交存储层文件变更，因此，两行RUN命令的执行环境根本不同</li><li>Dockerfile是一个文本文件，其内包含了一条一条的指令*（instruction），每一条指令构建一层，因此每条指令的内容，就是描述该层如何创建</li><li>Dockerfile脚本里必须有一个基础镜像，镜像时容器的基础，每次构建镜像的时候都会指定以哪个镜像作为容器运行的基础。以FROM  ** 开头 RUN 后面写命令内容</li></ol></li><li><p>Dockerfile指令：</p></li><li><p>Docker数据卷（Docker容器的数据持久化）：命令-v   一个可供一个或多个容器使用的特殊目录，绕过UFS（Unix文件系统）直接对Host OS的文件进行操作，数据卷可在容器之间共享和重用，对数据卷的修改会立马生效，对数据卷的更新不会影响镜像，数据卷也默认会一直存在，即使容器被删除。当重新创建另一个容器时，可以指定新创建的容器继续读取原来容器创建的文件（数据卷）</p></li><li><p>项目的容器化部署：<a href="https://www.bilibili.com/video/av36042649/?p=42">https://www.bilibili.com/video/av36042649/?p=42</a> ，将项目所有文件放在本地作为数据卷挂载到容器</p></li><li><p>Docker Compose（应在安装docker后立即安装）：Docker官方的开源项目，负责实现对Docker容器集群的快速编排，对项目便捷的进行生命周期管理，简化Docker原生API的操作</p></li><li><ol><li>Compose的定位是【定义和运行多个docker应用】，通过一个单独的docker-compose.yml模板文件（YAML格式），来定义一组相关联的应用容器作为一个项目（project）</li><li>yaml配置文件语法：<a href="https://www.funtl.com/zh/docker-compose/YAML-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%AD%E8%A8%80.html#%E7%AE%80%E4%BB%8B">https://www.funtl.com/zh/docker-compose/YAML-配置文件语言.html#简介</a></li><li>服务（service）：一个应用的容器，实际上可以包含若干运行相同镜像的容器实例,例如一个tomcat</li><li>项目（project）：由一组关联的应用容器组成的一个完整的业务单元，在docker-compose.yml文件中定义</li><li>对于docker-compose来说，大部分的命令对象既可以是项目本身也可以是项目中的服务或者容器，若无特别说明，命令对象将是项目本身，这意味着项目中所有的服务都将受到影响</li><li>由docker-compose统一管理的数据卷会放到docker的默认数据目录下 /usr/lib/docker</li></ol></li></ol><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">docker -it --name mysql05 -d -p 3307:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql<br>docker <span class="hljs-built_in">exec</span> -it mysql05 bash<br>mysql -u root -p<br>docker -it --name redis01 -d -p 6380:6379 redis<br>docker <span class="hljs-built_in">exec</span> -it redis01 redis-cli<br><span class="hljs-built_in">set</span> wwh 001<br>get wwh<br></code></pre></div></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>容器技术</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>虚拟化</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>VMWare配置多节点环境</title>
     <link href="/2021/03/25/VMWare%E9%85%8D%E7%BD%AE%E5%A4%9A%E8%8A%82%E7%82%B9%E7%8E%AF%E5%A2%83/"/>
     <url>/2021/03/25/VMWare%E9%85%8D%E7%BD%AE%E5%A4%9A%E8%8A%82%E7%82%B9%E7%8E%AF%E5%A2%83/</url>
     
