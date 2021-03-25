@@ -147,7 +147,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="Rome was not built in a day.">
+            <span class="h2" id="subtitle" title="乘风破浪">
               
             </span>
 
@@ -181,7 +181,7 @@
     
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2021/03/25/VMWare%E9%85%8D%E7%BD%AE%E5%A4%9A%E8%8A%82%E7%82%B9%E7%8E%AF%E5%A2%83/" target="_self">
-          <img src="/img/vmware.jpg" srcset="/img/loading.gif" lazyload alt="VMWare配置多节点环境">
+          <img src="/img/VMWare%E9%85%8D%E7%BD%AE%E5%A4%9A%E8%8A%82%E7%82%B9/vmware.jpg" srcset="/img/loading.gif" lazyload alt="VMWare配置多节点环境">
         </a>
       </div>
     
@@ -371,7 +371,34 @@
       var typing = Fluid.plugins.typing;
       var title = document.getElementById('subtitle').title;
       
-      typing(title)
+      $.ajax({
+        type: 'GET',
+        url: 'http://open.iciba.com/dsapi/?data=',
+        headers: {},
+        dataType: 'json',
+        success: function (result) {
+          var text;
+          if (result) {
+            var keys = 'note'.split('.')
+            if (result instanceof Array) {
+              result = result[0]
+            }
+            for (const k of keys) {
+              var value = result[k]
+              if (typeof value === 'string') {
+                text = value
+                break
+              } else if (value instanceof Object) {
+                result = value
+              }
+            }
+          }
+          text ? typing(text) : typing(title);
+        },
+        error: function () {
+          typing(title)
+        }
+      })
       
     })(window, document);
   </script>
