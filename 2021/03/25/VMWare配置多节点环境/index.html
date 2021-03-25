@@ -18,7 +18,7 @@
   <meta name="author" content="Wwhao">
   <meta name="keywords" content="">
   
-  <title>第二篇文章 - Wu&#39;s Space</title>
+  <title>VMWare配置多节点环境 - Wu&#39;s Space</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="第二篇文章">
+            <span class="h2" id="subtitle" title="VMWare配置多节点环境">
               
             </span>
 
@@ -173,7 +173,7 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-03-25 00:00" pubdate>
+      <time datetime="2021-03-25 11:36" pubdate>
         March 25, 2021 am
       </time>
     </span>
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1 字
+      586 字
     </span>
   
 
@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      1
+      6
        分钟
     </span>
   
@@ -225,10 +225,46 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">第二篇文章</h1>
+            <h1 style="display: none">VMWare配置多节点环境</h1>
             
             <div class="markdown-body">
-              <p>NBBBbbbbjjj</p>
+              <ol>
+<li><p>本教程使用CentOS 7 64位， 为每个虚拟机分配2GB内存和20G硬盘空间，请按需分配内存和硬盘空间</p>
+</li>
+<li><p>网络连接使用桥接模式</p>
+<p> <img src="https://img-blog.csdnimg.cn/20200708113302260.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MjAwOA==,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> <img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" srcset="/img/loading.gif" lazyload alt="点击并拖拽以移动"></p>
+</li>
+<li><p>启动虚拟机，使用dhclient工具为虚拟机自动分配一个可用的ip地址（dhclient是一个DHCP协议客户端，它使用DHCP协议或者BOOTP协议或在这两个协议都不可用时使用静态地址来配置一个或多个网络接口。），可以看到该工具为虚拟机分配的IP地址为192.168.0.103。</p>
+<p> <img src="https://img-blog.csdnimg.cn/20200708114319942.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MjAwOA==,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> <img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" srcset="/img/loading.gif" lazyload alt="点击并拖拽以移动"></p>
+</li>
+<li><p>固定IP地址：编辑网络配置文件 vim /etc/sysconfig/network-scripts/ifcfg-ens33，将BOOTPROTO的值由dhcp改为static，表示使用静态IP，并在配置文件末尾添加字段IPADDR的值为刚才执行dhclient命令获得的IP地址，添加子网掩码字段NETMASK的值为255.255.255.0，网关GATWAY的值为宿主机网关地址，添加一个DNS服务器的值119.29.29.29（腾讯DNS）</p>
+<p> <img src="https://img-blog.csdnimg.cn/20200708121533518.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MjAwOA==,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> <img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" srcset="/img/loading.gif" lazyload alt="点击并拖拽以移动"></p>
+</li>
+<li><p>保存退出，重启网卡 ：systemctl restart network.service</p>
+</li>
+<li><p>重复以上步骤，配置其他节点</p>
+</li>
+<li><p>使用SSH工具测试宿主机和节点之间，节点与节点之间，节点与外网之间是否可以ping通，并使用FTP工具测试是否可以正常上传文件到节点服务器</p>
+<p> <img src="https://img-blog.csdnimg.cn/20200708131135556.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MjAwOA==,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> <img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" srcset="/img/loading.gif" lazyload alt="点击并拖拽以移动"></p>
+<p> <img src="https://img-blog.csdnimg.cn/20200708131238806.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MzU5MjAwOA==,size_16,color_FFFFFF,t_70" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p> <img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" srcset="/img/loading.gif" lazyload alt="点击并拖拽以移动"></p>
+</li>
+<li><p>注：虚拟机的网络模式（详细参见博客：</p>
+<p> <a target="_blank" rel="noopener" href="https://www.cnblogs.com/songzhixue/p/11184546.html">https://www.cnblogs.com/songzhixue/p/11184546.html</a></p>
+<p> ）</p>
+<ol>
+<li>桥接模式：桥接模式就是将主机网卡与虚拟机虚拟的网卡利用虚拟网桥进行通信。类似于把物理主机虚拟为一个交换机，相互可以访问而不干扰。<strong>在桥接模式下，虚拟机ip地址需要与主机在同一个网段，如果需要联网，则网关与DNS需要与主机网卡一致。</strong></li>
+<li>NAT（地址转换模式）：在NAT模式中，主机网卡直接与虚拟NAT设备相连，利用虚拟的NAT设备以及虚拟DHCP服务器来使虚拟机连接外网。</li>
+<li>仅主机模式： 仅主机模式其实就是NAT模式去除了虚拟NAT设备，将虚拟机与外网隔开，使得虚拟机成为一个独立的系统，只与主机相互通讯。</li>
+</ol>
+</li>
+<li><p>有关IP 子网掩码等相关知识参考博客：<a target="_blank" rel="noopener" href="https://www.cloudxns.net/Support/detail/id/1863.html">https://www.cloudxns.net/Support/detail/id/1863.html</a></p>
+</li>
+</ol>
 
             </div>
             <hr>
@@ -238,7 +274,7 @@
                   <div class="post-meta mr-3">
                     <i class="iconfont icon-category"></i>
                     
-                      <a class="hover-with-bg" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a>
+                      <a class="hover-with-bg" href="/categories/%E8%99%9A%E6%8B%9F%E6%9C%BA/">虚拟机</a>
                     
                   </div>
                 
@@ -246,9 +282,7 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/Java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Java学习笔记</a>
-                    
-                      <a class="hover-with-bg" href="/tags/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">Linux学习笔记</a>
+                      <a class="hover-with-bg" href="/tags/Linux/">Linux</a>
                     
                   </div>
                 
@@ -265,18 +299,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/03/25/VMWare%E9%85%8D%E7%BD%AE%E5%A4%9A%E8%8A%82%E7%82%B9%E7%8E%AF%E5%A2%83/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">VMWare配置多节点环境</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/03/24/My-New-Post/">
-                        <span class="hidden-mobile">My New Post</span>
+                      <a href="/2021/03/25/%E7%AC%AC%E4%BA%8C%E7%AF%87%E6%96%87%E7%AB%A0/">
+                        <span class="hidden-mobile">第二篇文章</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
