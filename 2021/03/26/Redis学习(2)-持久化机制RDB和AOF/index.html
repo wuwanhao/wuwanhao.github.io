@@ -14,11 +14,11 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="第一次面试大三计算机专业在读，加入学校实验室自学两年，web开发、微信小程序、Java、JavaScript、Vue、React、SpringBoot、Docker三月中旬开始海投简历，想找一份今年暑假的实习生的工作，人生第一份简历投的腾讯实习。17号收到腾讯后台开发一面通知，18号开始了人生中第一次真正的岗位面试（腾讯会议面试）。">
-  <meta name="author" content="Wu">
+  <meta name="description" content="">
+  <meta name="author" content="Wwhao">
   <meta name="keywords" content="">
   
-  <title>被鹅厂混合双打的日子 - 熬夜1.0</title>
+  <title>Redis学习(2)-持久化机制RDB和AOF - 熬夜1.0</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
@@ -158,12 +158,12 @@
 </nav>
 
     <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
+         style="background: url('/img/redis/redis.jpg') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="被鹅厂混合双打的日子">
+            <span class="h2" id="subtitle" title="Redis学习(2)-持久化机制RDB和AOF">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-03-25 17:52" pubdate>
-        March 25, 2021 pm
+      <time datetime="2021-03-26 16:00" pubdate>
+        March 26, 2021 pm
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      226 字
+      885 字
     </span>
   
 
@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      2
+      10
        分钟
     </span>
   
@@ -233,12 +233,69 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">被鹅厂混合双打的日子</h1>
+            <h1 style="display: none">Redis学习(2)-持久化机制RDB和AOF</h1>
             
             <div class="markdown-body">
-              <h3 id="第一次面试"><a href="#第一次面试" class="headerlink" title="第一次面试"></a>第一次面试</h3><p>大三计算机专业在读，加入学校实验室自学两年，web开发、微信小程序、Java、JavaScript、Vue、React、SpringBoot、Docker<br>三月中旬开始海投简历，想找一份今年暑假的实习生的工作，人生第一份简历投的腾讯实习。17号收到腾讯后台开发一面通知，18号开始了人生中第一次真正的岗位面试（腾讯会议面试）。<span id="more"></span>面试官态度很好，面试题目很不错，下次还会再来的…</p>
-<h3 id="凉凉之后被捞之后又凉凉"><a href="#凉凉之后被捞之后又凉凉" class="headerlink" title="凉凉之后被捞之后又凉凉"></a>凉凉之后被捞之后又凉凉</h3><p>后台开发凉凉了，23号又被腾讯的CISG前端捞去面试，面试官小姐姐很客气，面试的问题五五开吧，会与不会各占一半，最后手撕算法题，没答上来，面试官小姐姐说我基础不太扎实，凉凉~~</p>
-<p>混合双打，刺激</p>
+              <h1 id="Redis持久化"><a href="#Redis持久化" class="headerlink" title="Redis持久化"></a>Redis持久化</h1><h2 id="RDB（Redis-DataBase）"><a href="#RDB（Redis-DataBase）" class="headerlink" title="RDB（Redis DataBase）"></a>RDB（Redis DataBase）</h2><blockquote>
+<p>什么是RDB？</p>
+</blockquote>
+<p><img src="https://p26-tt.byteimg.com/origin/pgc-image/2a7c55a6228746caa06acbbb483bb4aa.png" srcset="/img/loading.gif" lazyload alt="image-20210326141849405.png"></p>
+<p>在指定的时间间隔内将内存中的数据集快照写入磁盘,也就是行话讲的Snapshot快照,它恢复时是将快照文件直接读到内存里。Redis会单独创建( fork )一个子进程来进行持久化,会先将数据写入到一个临时文件中,待持久化过程都结束了,再用这个临时文件替换上次持久化好的文件。整个过程中,主进程是不进行任何IO操作的。这就确保了极高的性能。如果需要进行大规模数据的恢复,且对于数据恢复的完整性不是非常敏感,那RDB方式要比AOF方式更加的高效。RDB的缺点是最后一次次持久化后的数据可能丢失</p>
+<p>在生产环境时通常会备份RDB文件</p>
+<p><strong>RDB保存的文件dump.rdb</strong></p>
+<p>Redis配置文件中关于RDB的配置部分，记得修改完配置文件之后使用 <code>save</code> 命令保存一下配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash"><span class="hljs-comment"># Save the DB on disk:</span><br><span class="hljs-comment"># ........... </span><br><span class="hljs-comment">#</span><br><span class="hljs-comment">#   save &quot;&quot;</span><br><span class="hljs-comment">### 快照触发策略  900S内修改了1次key  就会出发RDB操作  生成dump.rdb文件</span><br>save 900 1<br>save 300 10<br>save 60 10000<br><br><br><span class="hljs-comment"># The filename where to dump the DB</span><br><span class="hljs-comment">## 快照文件名</span><br>dbfilename dump.rdb   <br></code></pre></div></td></tr></table></figure>
+
+<blockquote>
+<p>RDB 文件生成机制</p>
+</blockquote>
+<ol>
+<li>save的规则满足的情况下，自动触发，生成rdb文件</li>
+<li>执行flushall命令，生成rdb文件</li>
+<li>退出redis，生成rdb文件</li>
+</ol>
+<blockquote>
+<p>恢复RDB文件</p>
+</blockquote>
+<ol>
+<li><p>将rdb文件放在redis的启动目录即可，redis在启动时会自动恢复人rdb文件的内容</p>
+</li>
+<li><p>查看rdb文件需要存放的位置</p>
+ <figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; config get dir<br>1) <span class="hljs-string">&quot;dir&quot;</span><br>2) <span class="hljs-string">&quot;/usr/local/bin&quot;</span> <span class="hljs-comment">### 若在对应目录下存在rdb文件，则自动恢复</span><br></code></pre></div></td></tr></table></figure>
+
+</li>
+</ol>
+<p>优点：</p>
+<ol>
+<li>宕机时适合大规模的数据恢复</li>
+<li>对数据的完整性要求不高时候， 可使用rdb恢复数据</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>需要一定的时间间隔触发操作</li>
+<li>fork进程的时候会占用一定的内存空间</li>
+</ol>
+<h2 id="AOF（Append-Only-File）"><a href="#AOF（Append-Only-File）" class="headerlink" title="AOF（Append Only File）"></a>AOF（Append Only File）</h2><p>数据追加 将所有的命令都记录下来</p>
+<p><img src="https://p6-tt.byteimg.com/origin/pgc-image/82cc7ce106344783b6802a85bdb18db9.png" srcset="/img/loading.gif" lazyload alt="image-20210326145756428.png"></p>
+<p>以日志的形式来记录每个写操作，将Redis执行过的所有指令记录下来(读操作不记录) , 只许追加文件但不可以改写文件, redis启动之初会读取该文件重新构建数据,换言之, redis重启的话就根据日志文件的内容将写指令从前到后执行一-次以完成数据的恢复工作<br><strong>AOF保存的是appendonly.aof文件</strong></p>
+<p>配置文件中关于AOF的部分</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash"><span class="hljs-comment"># Please check http://redis.io/topics/persistence for more information.</span><br><br>appendonly no   <span class="hljs-comment">### AOF默认不开启  开启的话 需要设置为yes </span><br><br><span class="hljs-comment"># The name of the append only file (default: &quot;appendonly.aof&quot;)</span><br><br>appendfilename <span class="hljs-string">&quot;appendonly.aof&quot;</span>  <span class="hljs-comment">### 追加的文件名</span><br><br>.......<br><br><span class="hljs-comment"># appendfsync always  </span><br>appendfsync everysec   <span class="hljs-comment">### AOF的写频率  默认每一秒钟写一次  </span><br><span class="hljs-comment"># appendfsync no</span><br></code></pre></div></td></tr></table></figure>
+
+<p>当aof文件被破坏时候，redis会拒绝客户端的连接，此时可以使用与aof文件同级目录下的redis-check-aof文件进行恢复  <code>redis-check-aof -–fix appendonly.aof</code>  </p>
+<blockquote>
+<p>文件太大需要重写时：默认64MB开启一个新的文件</p>
+</blockquote>
+<p>优点：</p>
+<ol>
+<li>每一次修改都会记录，文件完整性更好</li>
+<li>每秒同步一次，可能会丢失数据</li>
+<li>从不同步时，效率最高</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>相对于数据文件来说 AOF远远大于RDB，修复速度也比RDB慢</li>
+<li>AOF运行效率要比RDB慢   故redis默认持久化就是RDB</li>
+</ol>
 
             </div>
             <hr>
@@ -248,7 +305,7 @@
                   <div class="post-meta mr-3">
                     <i class="iconfont icon-category"></i>
                     
-                      <a class="hover-with-bg" href="/categories/%E6%97%A5%E5%B8%B8/">日常</a>
+                      <a class="hover-with-bg" href="/categories/NoSQL/">NoSQL</a>
                     
                   </div>
                 
@@ -256,7 +313,9 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E5%AE%9E%E4%B9%A0/">实习</a>
+                      <a class="hover-with-bg" href="/tags/Redis/">Redis</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
                     
                   </div>
                 
@@ -273,18 +332,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/03/25/%E5%88%86%E4%BA%AB%E4%B8%80%E4%BA%9B%E6%97%A5%E5%B8%B8%E6%91%98%E5%BD%95%E7%9A%84%E7%9F%AD%E5%8F%A5/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">分享一些日常摘录的短句</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/03/25/VMWare%E9%85%8D%E7%BD%AE%E5%A4%9A%E8%8A%82%E7%82%B9%E7%8E%AF%E5%A2%83/">
-                        <span class="hidden-mobile">VMWare配置多节点环境</span>
+                      <a href="/2021/03/26/Redis%E5%AD%A6%E4%B9%A0(1)-%E5%B8%B8%E7%94%A8%E7%9A%84%E4%BA%94%E7%A7%8D%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+                        <span class="hidden-mobile">Redis学习(1)-常用的五种数据结构</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
