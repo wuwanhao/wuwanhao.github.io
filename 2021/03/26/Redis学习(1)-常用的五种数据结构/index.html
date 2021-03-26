@@ -201,7 +201,7 @@ Key-Value:  Redis
       <i class="iconfont icon-clock-fill"></i>
       
       
-      28
+      27
        分钟
     </span>
   
@@ -271,9 +271,6 @@ Key-Value:  Redis
 <li>key-list       一个key对应一个列表</li>
 <li>key-set      一个key对应一个无序不重复集合</li>
 <li>key-zset     一个key对应一个有序不重复集合</li>
-<li>HyperLogLog   计算近似值</li>
-<li>GEO   存储地理位置</li>
-<li>BIT  存储一个Bit</li>
 </ol>
 <h3 id="4-Redis五种常用的数据结构图"><a href="#4-Redis五种常用的数据结构图" class="headerlink" title="4. Redis五种常用的数据结构图"></a>4. Redis五种常用的数据结构图</h3><p><img src="https://p1-tt.byteimg.com/origin/pgc-image/9ed4d6547d954c5c9ce395a37e188abe.png" srcset="/img/loading.gif" lazyload alt="1601019295378-ff53f32e-6e87-4370-9d0a-820170b902aa.png"></p>
 <h2 id="String（字符串）"><a href="#String（字符串）" class="headerlink" title="String（字符串）"></a>String（字符串）</h2><figure class="highlight vala"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs vala"><span class="hljs-meta"># 添加值</span><br><span class="hljs-keyword">set</span> key value<br><br><span class="hljs-meta"># 获取值</span><br><span class="hljs-keyword">get</span> key<br><br><span class="hljs-meta"># 批量添加值</span><br>mset key1 value1 key2 value2<br><br><span class="hljs-meta"># 批量获取值</span><br>mget key1 key2<br><br><span class="hljs-meta"># 值自增(1)</span><br>incr key<br><br><span class="hljs-meta"># 值自减(1)</span><br>decr key<br><br><span class="hljs-meta"># 自增自减指定数量</span><br>incrby key <span class="hljs-number">5</span><br>decrby key <span class="hljs-number">5</span><br><span class="hljs-meta"># 设定指定值的生存时间(建议每次添加数据时都指定生存时间)</span><br>setex key <span class="hljs-number">5</span>(second) value<br><br><span class="hljs-meta"># 设置值,如果当前key不存在的话  若存在则无任何操作</span><br>setnx key value<br><br><span class="hljs-meta"># 在key对应的value后追加内容</span><br>append key value<br><br><span class="hljs-meta"># 查看value的长度</span><br>strlen key<br></code></pre></div></td></tr></table></figure>
