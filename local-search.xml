@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>Redis学习(3)-消息发布和订阅</title>
+    <link href="/2021/03/26/Redis%E5%AD%A6%E4%B9%A0(3)-%E6%B6%88%E6%81%AF%E5%8F%91%E5%B8%83%E5%92%8C%E8%AE%A2%E9%98%85/"/>
+    <url>/2021/03/26/Redis%E5%AD%A6%E4%B9%A0(3)-%E6%B6%88%E6%81%AF%E5%8F%91%E5%B8%83%E5%92%8C%E8%AE%A2%E9%98%85/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Redis发布订阅"><a href="#Redis发布订阅" class="headerlink" title="Redis发布订阅"></a>Redis发布订阅</h1><p>订阅可以用于构建及时通信应用，例如网络聊天室、实时广播、实时提醒</p><span id="more"></span><h3 id="消息订阅（SUB）"><a href="#消息订阅（SUB）" class="headerlink" title="消息订阅（SUB）"></a>消息订阅（SUB）</h3><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; SUBSCRIBE channel01  <span class="hljs-comment">## 订阅一个频道 频道名为channel01</span><br>Reading messages... (press Ctrl-C to quit)<br>1) <span class="hljs-string">&quot;subscribe&quot;</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span><br>3) (<span class="hljs-built_in">integer</span>) 1<br><br><span class="hljs-comment">## 等待读取推送的消息</span><br>1) <span class="hljs-string">&quot;message&quot;</span> <span class="hljs-comment">## 消息</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span> <span class="hljs-comment">## 消息来自的频道</span><br>3) <span class="hljs-string">&quot;hello&quot;</span> <span class="hljs-comment">## 消息内容</span><br>1) <span class="hljs-string">&quot;message&quot;</span> <span class="hljs-comment">## 消息</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span>  <span class="hljs-comment">## 消息来自的频道</span><br>3) <span class="hljs-string">&quot;Hello World&quot;</span>  <span class="hljs-comment">## 消息内容</span><br></code></pre></div></td></tr></table></figure><h3 id="消息发布（PUB）"><a href="#消息发布（PUB）" class="headerlink" title="消息发布（PUB）"></a>消息发布（PUB）</h3><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; PUBLISH channel01 hello  <span class="hljs-comment">## 在对应频道中发布消息</span><br>(<span class="hljs-built_in">integer</span>) 1<br>127.0.0.1:6379&gt; PUBLISH channel01 <span class="hljs-string">&quot;Hello World&quot;</span>  <span class="hljs-comment">## 在对应频道中发布消息</span><br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></div></td></tr></table></figure><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>Redis是使用C实现的,通过分析Redis源码里的pubsub.c文件，了解发布和订阅机制的底层实现,籍此加深对Redis的理解。</p><p>Redis通过PUBLISH、SUBSCRIBE 和PSUBSCRIBE等命令实现发布和订阅功能。通过SUBSCRIBE命令订阅某频道后, redis-server 里维护了一个字典，字典的键就是一个个channel ，而字典的值则是一个链表，链表中保存了所有订阅这个channel的客户端。SUBSCRIBE 命令的关键，就是将客户端添加到给定channel的订阅链表中。</p><p>通过PUBLISH命令向订阅者发送消息，redis-server会使用给定的频道作为键，在它所维护的channel字典中查找记录了订阅这个频道的所有客户端的链表，遍历这个链表，将消息发布给所有订阅者。</p><p>Pub/Sub从字面上理解就是发布( Publish )与订阅( Subscribe ) , 在Redis中，你可以设定对某一个key值进行消息发布及消息订阅，当一个key值上进行了消息发布后,所有订阅它的客户端都会收到相应的消息。这一功能最明显的用法就是用作实时消息系统，比如普通的即时聊天，群聊等功能。</p><h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ol><li>网站实时沟通消息系统</li><li>实时聊天（频道当做聊天室）</li><li>简单的订阅、关注系统，复杂的系统通常使用MQ</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>NoSQL</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>Redis</tag>
+      
+      <tag>数据库</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Redis学习(2)-持久化机制RDB和AOF</title>
     <link href="/2021/03/26/Redis%E5%AD%A6%E4%B9%A0(2)-%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6RDB%E5%92%8CAOF/"/>
     <url>/2021/03/26/Redis%E5%AD%A6%E4%B9%A0(2)-%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6RDB%E5%92%8CAOF/</url>
