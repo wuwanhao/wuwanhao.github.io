@@ -14,11 +14,11 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="Redis发布订阅订阅可以用于构建及时通信应用，例如网络聊天室、实时广播、实时提醒">
+  <meta name="description" content="">
   <meta name="author" content="Wwhao">
   <meta name="keywords" content="">
   
-  <title>Redis学习(3)-消息发布和订阅 - 404 Not Found</title>
+  <title>Redis学习(5)-Redis缓存穿透和雪崩 - 404 Not Found</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="Redis学习(3)-消息发布和订阅">
+            <span class="h2" id="subtitle" title="Redis学习(5)-Redis缓存穿透和雪崩">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-03-26 21:15" pubdate>
-        March 26, 2021 pm
+      <time datetime="2021-03-27 12:00" pubdate>
+        March 27, 2021 pm
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      554 字
+      758 字
     </span>
   
 
@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      6
+      7
        分钟
     </span>
   
@@ -233,27 +233,44 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Redis学习(3)-消息发布和订阅</h1>
+            <h1 style="display: none">Redis学习(5)-Redis缓存穿透和雪崩</h1>
             
             <div class="markdown-body">
-              <h1 id="Redis发布订阅"><a href="#Redis发布订阅" class="headerlink" title="Redis发布订阅"></a>Redis发布订阅</h1><p>订阅可以用于构建及时通信应用，例如网络聊天室、实时广播、实时提醒</p>
-<span id="more"></span>
-
-<h3 id="消息订阅（SUB）"><a href="#消息订阅（SUB）" class="headerlink" title="消息订阅（SUB）"></a>消息订阅（SUB）</h3><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; SUBSCRIBE channel01  <span class="hljs-comment">## 订阅一个频道 频道名为channel01</span><br>Reading messages... (press Ctrl-C to quit)<br>1) <span class="hljs-string">&quot;subscribe&quot;</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span><br>3) (<span class="hljs-built_in">integer</span>) 1<br><br><span class="hljs-comment">## 等待读取推送的消息</span><br>1) <span class="hljs-string">&quot;message&quot;</span> <span class="hljs-comment">## 消息</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span> <span class="hljs-comment">## 消息来自的频道</span><br>3) <span class="hljs-string">&quot;hello&quot;</span> <span class="hljs-comment">## 消息内容</span><br>1) <span class="hljs-string">&quot;message&quot;</span> <span class="hljs-comment">## 消息</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span>  <span class="hljs-comment">## 消息来自的频道</span><br>3) <span class="hljs-string">&quot;Hello World&quot;</span>  <span class="hljs-comment">## 消息内容</span><br></code></pre></div></td></tr></table></figure>
-
-<h3 id="消息发布（PUB）"><a href="#消息发布（PUB）" class="headerlink" title="消息发布（PUB）"></a>消息发布（PUB）</h3><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; PUBLISH channel01 hello  <span class="hljs-comment">## 在对应频道中发布消息</span><br>(<span class="hljs-built_in">integer</span>) 1<br>127.0.0.1:6379&gt; PUBLISH channel01 <span class="hljs-string">&quot;Hello World&quot;</span>  <span class="hljs-comment">## 在对应频道中发布消息</span><br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></div></td></tr></table></figure>
-
-
-
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>Redis是使用C实现的,通过分析Redis源码里的pubsub.c文件，了解发布和订阅机制的底层实现,籍此加深对Redis的理解。</p>
-<p>Redis通过PUBLISH、SUBSCRIBE 和PSUBSCRIBE等命令实现发布和订阅功能。通过SUBSCRIBE命令订阅某频道后, redis-server 里维护了一个字典，字典的键就是一个个channel ，而字典的值则是一个链表，链表中保存了所有订阅这个channel的客户端。SUBSCRIBE 命令的关键，就是将客户端添加到给定channel的订阅链表中。</p>
-<p>通过PUBLISH命令向订阅者发送消息，redis-server会使用给定的频道作为键，在它所维护的channel字典中查找记录了订阅这个频道的所有客户端的链表，遍历这个链表，将消息发布给所有订阅者。</p>
-<p>Pub/Sub从字面上理解就是发布( Publish )与订阅( Subscribe ) , 在Redis中，你可以设定对某一个key值进行消息发布及消息订阅，当一个key值上进行了消息发布后,所有订阅它的客户端都会收到相应的消息。这一功能最明显的用法就是用作实时消息系统，比如普通的即时聊天，群聊等功能。</p>
-<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ol>
-<li>网站实时沟通消息系统</li>
-<li>实时聊天（频道当做聊天室）</li>
-<li>简单的订阅、关注系统，复杂的系统通常使用MQ</li>
+              <h1 id="Redis缓存穿透和雪崩（面试）"><a href="#Redis缓存穿透和雪崩（面试）" class="headerlink" title="Redis缓存穿透和雪崩（面试）"></a>Redis缓存穿透和雪崩（面试）</h1><p>Redis缓存的使用，极大的提升了应用程序的性能和效率，特别是数据查询方面。但同时，它也带来了一些问题。其中，最要害的问题，就是数据的一致性问题，从严格意义上讲,这个问题无解。如果对数据的一致性要求很高，那么就不能使用缓存。另外的一些典型问题就是缓存穿透、 缓存雪崩和缓存击穿。 目前,业界也都有比较流行的解决方案。</p>
+<h2 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h2><p>缓存穿透的概念很简单，用户想要查询一个数据，发现Redis内存数据库没有，也就是缓存没有命中，于是向持久层数据库查询。发现也没有，于是本次查询失败。当用户很多的时候，缓存都没有命中，于是都去请求了持久层数据库。这会给持久层数据库造成很大的压力，这时候就出现了缓存穿透。</p>
+<h4 id="缓存穿透的解决方案"><a href="#缓存穿透的解决方案" class="headerlink" title="缓存穿透的解决方案"></a>缓存穿透的解决方案</h4><blockquote>
+<p>布隆过滤器</p>
+</blockquote>
+<p>布隆过滤器是一种数据结构，对所有可能查询的参数以hash形式存储，在控制层先进行校验，不符合规则则丢弃，避免了对底层存储系统的查询压力。</p>
+<blockquote>
+<p>缓存空对象</p>
+</blockquote>
+<ol>
+<li>缓存控制需要更大缓存空间</li>
+<li>当对控制也设置过期时间时，依然会存在缓存层存数层的数据不一致的情况，对于一些需要保持一致性的业务会有些影响</li>
 </ol>
+<h2 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h2><p>持续的高并发同时请求一个Key，当某一个时间点这个key失效时，这些并发请求用时直接请求数据库，同时数据库中对应数据也会写回缓存，对数据库造成极大压力      例如 微博服务器宕机</p>
+<h4 id="缓存击穿的解决方案"><a href="#缓存击穿的解决方案" class="headerlink" title="缓存击穿的解决方案"></a>缓存击穿的解决方案</h4><blockquote>
+<p>设置key永不过期</p>
+</blockquote>
+<p>浪费存储空间</p>
+<blockquote>
+<p>互斥锁</p>
+</blockquote>
+<p>使用分布式锁，保证对每个key同时只有一个线程去查询，其他线程无权获得锁，此时只需要等待锁即可。</p>
+<h2 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h2><p>在某一个时间段，缓存集体失效，或者Redis宕机</p>
+<h3 id="缓存雪崩的解决方案"><a href="#缓存雪崩的解决方案" class="headerlink" title="缓存雪崩的解决方案"></a>缓存雪崩的解决方案</h3><blockquote>
+<p>Redis高可用</p>
+</blockquote>
+<p>搭建Redis集群</p>
+<blockquote>
+<p> 限流降级</p>
+</blockquote>
+<p>这个解决方案的思想是，在缓存失效后，通过加锁或者队列来控制读数据库写缓存的线程数量。比如对某个key只允许一个线程查询数据和写缓存，其他线程等待。</p>
+<blockquote>
+<p>数据预热</p>
+</blockquote>
+<p>在正式部署之前，先把可能的数据先预先访问一遍,这样部分可能大量访问的数据就会加载到缓存中。在即<br>将发生大并发访问前手动触发加载缓存不同的key ，设置不同的过期时间，让缓存失效的时间点尽量均匀。</p>
 
             </div>
             <hr>
@@ -290,18 +307,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/03/27/Redis%E5%AD%A6%E4%B9%A0(4)-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Redis学习(4)-主从复制和哨兵模式简单入门</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/03/26/Redis%E5%AD%A6%E4%B9%A0(2)-%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6RDB%E5%92%8CAOF/">
-                        <span class="hidden-mobile">Redis学习(2)-持久化机制RDB和AOF</span>
+                      <a href="/2021/03/27/Redis%E5%AD%A6%E4%B9%A0(4)-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8/">
+                        <span class="hidden-mobile">Redis学习(4)-主从复制和哨兵模式简单入门</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

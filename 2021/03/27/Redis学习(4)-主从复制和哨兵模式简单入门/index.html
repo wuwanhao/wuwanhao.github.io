@@ -14,11 +14,11 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
   <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="Redis发布订阅订阅可以用于构建及时通信应用，例如网络聊天室、实时广播、实时提醒">
+  <meta name="description" content="">
   <meta name="author" content="Wwhao">
   <meta name="keywords" content="">
   
-  <title>Redis学习(3)-消息发布和订阅 - 404 Not Found</title>
+  <title>Redis学习(4)-主从复制和哨兵模式简单入门 - 404 Not Found</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
@@ -163,7 +163,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="Redis学习(3)-消息发布和订阅">
+            <span class="h2" id="subtitle" title="Redis学习(4)-主从复制和哨兵模式简单入门">
               
             </span>
 
@@ -173,8 +173,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2021-03-26 21:15" pubdate>
-        March 26, 2021 pm
+      <time datetime="2021-03-27 07:00" pubdate>
+        March 27, 2021 am
       </time>
     </span>
   
@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      554 字
+      1.8k 字
     </span>
   
 
@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      6
+      21
        分钟
     </span>
   
@@ -233,26 +233,58 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Redis学习(3)-消息发布和订阅</h1>
+            <h1 style="display: none">Redis学习(4)-主从复制和哨兵模式简单入门</h1>
             
             <div class="markdown-body">
-              <h1 id="Redis发布订阅"><a href="#Redis发布订阅" class="headerlink" title="Redis发布订阅"></a>Redis发布订阅</h1><p>订阅可以用于构建及时通信应用，例如网络聊天室、实时广播、实时提醒</p>
-<span id="more"></span>
-
-<h3 id="消息订阅（SUB）"><a href="#消息订阅（SUB）" class="headerlink" title="消息订阅（SUB）"></a>消息订阅（SUB）</h3><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; SUBSCRIBE channel01  <span class="hljs-comment">## 订阅一个频道 频道名为channel01</span><br>Reading messages... (press Ctrl-C to quit)<br>1) <span class="hljs-string">&quot;subscribe&quot;</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span><br>3) (<span class="hljs-built_in">integer</span>) 1<br><br><span class="hljs-comment">## 等待读取推送的消息</span><br>1) <span class="hljs-string">&quot;message&quot;</span> <span class="hljs-comment">## 消息</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span> <span class="hljs-comment">## 消息来自的频道</span><br>3) <span class="hljs-string">&quot;hello&quot;</span> <span class="hljs-comment">## 消息内容</span><br>1) <span class="hljs-string">&quot;message&quot;</span> <span class="hljs-comment">## 消息</span><br>2) <span class="hljs-string">&quot;channel01&quot;</span>  <span class="hljs-comment">## 消息来自的频道</span><br>3) <span class="hljs-string">&quot;Hello World&quot;</span>  <span class="hljs-comment">## 消息内容</span><br></code></pre></div></td></tr></table></figure>
-
-<h3 id="消息发布（PUB）"><a href="#消息发布（PUB）" class="headerlink" title="消息发布（PUB）"></a>消息发布（PUB）</h3><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; PUBLISH channel01 hello  <span class="hljs-comment">## 在对应频道中发布消息</span><br>(<span class="hljs-built_in">integer</span>) 1<br>127.0.0.1:6379&gt; PUBLISH channel01 <span class="hljs-string">&quot;Hello World&quot;</span>  <span class="hljs-comment">## 在对应频道中发布消息</span><br>(<span class="hljs-built_in">integer</span>) 1<br></code></pre></div></td></tr></table></figure>
-
+              <h1 id="Redis主从复制"><a href="#Redis主从复制" class="headerlink" title="Redis主从复制"></a>Redis主从复制</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>主从复制，是指将一台Redis服务器的数据，复制到其他的Redis服务器。前者称为主节点(master/leader)，后者称为从节点(slave/follower) ；数据的复制是单向的，只能由主节点到从节点。Master以写为主， Slave以读为主。默认情况下，每台Redis服务器都是主节点，并且一个主节点可以有多个从节点(或没有从节点)，但一个从节点只能有一个主节点。</p>
+<h2 id="主从复制的作用"><a href="#主从复制的作用" class="headerlink" title="主从复制的作用"></a>主从复制的作用</h2><p>1、<strong>数据冗余</strong>：主从复制实现了数据的热备份，是持久化之外的一种数据冗余方式。<br>2、<strong>故障恢复</strong>：当主节点出现问题时，可以由从节点提供服务，实现快速的故障恢复，实际上是一种服务的冗余。<br>3、<strong>负载均衡</strong>：在主从复制的基础上，配合读写分离，可以由主节点提供写服务，由从节点提供读服务(即写Redis数据时应用连接主节点，读Redis数据时应用连接从节点) , 分担服务器负载；尤其是在写少读多的场景下，通过多个从节点分担读负载，可以大大提高Redis服务器的并发量。<br>4、<strong>高可用（集群）基石</strong>：除了上述作用以外，主从复制还是哨兵和集群能够实施的基础，因此说主从复制是Redis高可用的基础。</p>
+<p>一般来说，要将Redis运用于工程项目中，只使用一台Redis是万万不能的，原因如下:<br>1、从结构上，单个Redis服务器会发生单点故障，并且一台服务器需要处理所有的请求负载，压力较大;<br>2、从容量上，单个Redis服务器内存容量有限，就算一台Redis服务器内存容量为256G，也不能将所有内存用作Redis存储内存；<br><strong>一般来说 ,单台Redis最大使用内存不应该超过20G</strong>。<br>一般电商网站上的商品，都是一次上传，无数次浏览的，说专业点也就是”多读少写”。</p>
+<p><img src="https://p6-tt.byteimg.com/origin/pgc-image/414eca7af6424c56ba11fd9b00c984b6.jpg" srcset="/img/loading.gif" lazyload alt="主从复制.jpg"></p>
+<h3 id="查看主机主从信息的命令"><a href="#查看主机主从信息的命令" class="headerlink" title="查看主机主从信息的命令"></a>查看主机主从信息的命令</h3><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; info replication<br><span class="hljs-comment"># Replication</span><br>role:master   <span class="hljs-comment">### 默认为主节点</span><br>connected_slaves:0  <span class="hljs-comment">### 连接的从机</span><br>master_replid:2c5b6268c3eea93ed80669e00e96c09b85cb48ad<br>master_replid2:0000000000000000000000000000000000000000<br>master_repl_offset:0<br>second_repl_offset:-1<br>repl_backlog_active:0<br>repl_backlog_size:1048576<br>repl_backlog_first_byte_offset:0<br>repl_backlog_histlen:0<br></code></pre></div></td></tr></table></figure>
 
 
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>Redis是使用C实现的,通过分析Redis源码里的pubsub.c文件，了解发布和订阅机制的底层实现,籍此加深对Redis的理解。</p>
-<p>Redis通过PUBLISH、SUBSCRIBE 和PSUBSCRIBE等命令实现发布和订阅功能。通过SUBSCRIBE命令订阅某频道后, redis-server 里维护了一个字典，字典的键就是一个个channel ，而字典的值则是一个链表，链表中保存了所有订阅这个channel的客户端。SUBSCRIBE 命令的关键，就是将客户端添加到给定channel的订阅链表中。</p>
-<p>通过PUBLISH命令向订阅者发送消息，redis-server会使用给定的频道作为键，在它所维护的channel字典中查找记录了订阅这个频道的所有客户端的链表，遍历这个链表，将消息发布给所有订阅者。</p>
-<p>Pub/Sub从字面上理解就是发布( Publish )与订阅( Subscribe ) , 在Redis中，你可以设定对某一个key值进行消息发布及消息订阅，当一个key值上进行了消息发布后,所有订阅它的客户端都会收到相应的消息。这一功能最明显的用法就是用作实时消息系统，比如普通的即时聊天，群聊等功能。</p>
-<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ol>
-<li>网站实时沟通消息系统</li>
-<li>实时聊天（频道当做聊天室）</li>
-<li>简单的订阅、关注系统，复杂的系统通常使用MQ</li>
+
+
+
+<h2 id="单机多服务进程简单示例操作"><a href="#单机多服务进程简单示例操作" class="headerlink" title="单机多服务进程简单示例操作"></a>单机多服务进程简单示例操作</h2><ol>
+<li>复制多份配置文件用于启动多个Redis服务进程，在配置文件中修改Redis启动端口、PID文件名、日志文件生成名、rdb文件生成名</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash"><span class="hljs-comment"># Accept connections on the specified port, default is 6379 (IANA #815344).</span><br><span class="hljs-comment"># If port 0 is specified Redis will not listen on a TCP socket.</span><br>port 6380<br><br><span class="hljs-comment"># If a pid file is specified, Redis writes it where specified at startup</span><br><span class="hljs-comment"># and removes it at exit.</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># When the server runs non daemonized, no pid file is created if none is</span><br><span class="hljs-comment"># specified in the configuration. When the server is daemonized, the pid file</span><br><span class="hljs-comment"># is used even if not specified, defaulting to &quot;/var/run/redis.pid&quot;.</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># Creating a pid file is best effort: if Redis is not able to create it</span><br><span class="hljs-comment"># nothing bad happens, the server will start and run normally.</span><br>pidfile /var/run/redis_6380.pid<br><br><br><span class="hljs-comment"># Specify the log file name. Also the empty string can be used to force</span><br><span class="hljs-comment"># Redis to log on the standard output. Note that if you use standard</span><br><span class="hljs-comment"># output for logging but daemonize, logs will be sent to /dev/null</span><br>logfile <span class="hljs-string">&quot;6380.log&quot;</span><br><br><span class="hljs-comment"># The filename where to dump the DB</span><br>dbfilename dump80.rdb<br></code></pre></div></td></tr></table></figure>
+
+<ol start="2">
+<li>启动对应的Redis服务，默认每个Redis服务都是master，输入命令<code>slaveof 127.0.0.1 6379</code>使得两外两台主机变为6379的从机</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6380&gt; slaveof 127.0.0.1 6379<br>OK<br><br>127.0.0.1:6381&gt; slaveof 127.0.0.1 6379<br>OK<br></code></pre></div></td></tr></table></figure>
+
+<ol start="3">
+<li><code>info replication</code>查看 6379的信息，可以看到6379已经有两台从机了</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">127.0.0.1:6379&gt; info replication<br><span class="hljs-comment"># Replication</span><br>role:master<br>connected_slaves:2   <span class="hljs-comment">## 2台从机</span><br>slave0:ip=127.0.0.1,port=6380,state=online,offset=196,lag=1  <span class="hljs-comment">## 从机1信息</span><br>slave1:ip=127.0.0.1,port=6381,state=online,offset=196,lag=1  <span class="hljs-comment">## 从机2信息</span><br>master_replid:452a643005a0e5aae46dae69c7435aa0499450be<br>master_replid2:0000000000000000000000000000000000000000<br>master_repl_offset:210<br>second_repl_offset:-1<br>repl_backlog_active:1<br>repl_backlog_size:1048576<br>repl_backlog_first_byte_offset:1<br>repl_backlog_histlen:210<br></code></pre></div></td></tr></table></figure>
+
+
+
+
+
+<h2 id="复制情况"><a href="#复制情况" class="headerlink" title="复制情况"></a>复制情况</h2><p>主机可以写，但从机不能写，只能读</p>
+<p>主机中所有的信息都会被从机保存</p>
+<p>主机断开连接，从机依旧是连接到主机的，但是没有写操作了，此时如果主机上线，从机依旧可以继续直接从主机获取信息</p>
+<p><strong>当没有修改配置文件启动的从机宕机之后重新上线时，又会变成原来的主机状态，因此，如果想让主机和从机都可以继续保持主从状态连接，需要通过修改配置文件建立永久主从关系，通过命令行的方法只是临时的关系</strong></p>
+<p>某台数据库只要变成了从机，立马会写主机数据到从机（全量复制）</p>
+<h2 id="复制原理"><a href="#复制原理" class="headerlink" title="复制原理"></a>复制原理</h2><p>Slave启动成功连接到master后会发送一个sync命令<br>Master接到命令，启动后台的存盘进程，同时收集所有接收到的用于修改数据集的命令，在后台进程执行完毕之后，master将传送整个数据文件到slave ，并完成一次完全同步（全量复制）。<br><strong>全量复制：而slave服务在接收到数据库文件数据后，将其存盘并加载到内存中。</strong><br><strong>增量复制：Master继续将新的所有收集到的修改命令依次传给slave ，完成同步</strong><br>但是只要是重新连接master，就会进行一次完全同步(全量复制) </p>
+<h1 id="哨兵模式"><a href="#哨兵模式" class="headerlink" title="哨兵模式"></a>哨兵模式</h1><p>主从切换技术的方法是：当主服务器宕机后，需要手动把一台从服务器切换为主服务器，这就需要人工干预，费事费力，还会造成一段时间内服务不可用。这不是一种推荐的方式，更多时候，我们优先考虑哨兵模式。Redis从2.8开始正式提供了Sentinel (哨兵)架构来解决这个问题。能够后台监控主机是否故障,如果故障了根据投票数自动将从库转换为主库。<br>哨兵模式是一种特殊的模式，首先Redis提供了哨兵的命令，哨兵是一个独立的进程，作为进程，它会独立运行。其原理是哨兵通过发送命令，等待Redis服务器响应，从而监控运行的多个Redis实例。</p>
+<p><img src="https://p6-tt.byteimg.com/origin/pgc-image/8fd92acb1d184a35b835516f287e3a60.jpg" srcset="/img/loading.gif" lazyload alt="主从复制2.jpg"></p>
+<p><img src="https://p1-tt.byteimg.com/origin/pgc-image/81f7bf91f4e14cceaab0a3fb446c228f.jpg" srcset="/img/loading.gif" lazyload alt="主从复制3.jpg"></p>
+<p>假设主服务器宕机，哨兵1先检测到这个结果，系统并不会马上进行<strong>failover</strong>过程，仅仅是哨兵1主观的认为主服务器不可用，这个现象成为<strong>主观下线</strong>。当后面的哨兵也检测到主服务器不可用，并且数量达到一定值时，那么哨兵之间就会进行一次<strong>投票</strong>，投票的结果由一个哨兵发起，进行<strong>failover[故障转移]<strong>操作。切换成功后，就会通过发布订阅模式，让各个哨兵把自己监控的从服务器实现切换主机，这个过程称为</strong>客观下线</strong>。</p>
+<p>如果主机重新上线，这时候会自动转换为新主机的从机</p>
+<p>优点：</p>
+<ol>
+<li>哨兵集群基于主从复制模式</li>
+<li>主从可以切换，故障可以转移，系统可用性高</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>不易在线扩容</li>
+<li>实现哨兵模式的配置很麻烦</li>
 </ol>
 
             </div>
@@ -290,9 +322,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2021/03/27/Redis%E5%AD%A6%E4%B9%A0(4)-%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%92%8C%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F%E7%AE%80%E5%8D%95%E5%85%A5%E9%97%A8/">
+                      <a href="/2021/03/27/Redis%E5%AD%A6%E4%B9%A0(5)-Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E5%92%8C%E9%9B%AA%E5%B4%A9%EF%BC%88%E9%9D%A2%E8%AF%95%EF%BC%89/">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Redis学习(4)-主从复制和哨兵模式简单入门</span>
+                        <span class="hidden-mobile">Redis学习(5)-Redis缓存穿透和雪崩</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
@@ -300,8 +332,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2021/03/26/Redis%E5%AD%A6%E4%B9%A0(2)-%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6RDB%E5%92%8CAOF/">
-                        <span class="hidden-mobile">Redis学习(2)-持久化机制RDB和AOF</span>
+                      <a href="/2021/03/26/Redis%E5%AD%A6%E4%B9%A0(3)-%E6%B6%88%E6%81%AF%E5%8F%91%E5%B8%83%E5%92%8C%E8%AE%A2%E9%98%85/">
+                        <span class="hidden-mobile">Redis学习(3)-消息发布和订阅</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
