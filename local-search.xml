@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>2021年3月踩坑记录（实习面经）</title>
+    <link href="/2021/03/31/2021%E5%B9%B43%E6%9C%88%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95%EF%BC%88%E5%AE%9E%E4%B9%A0%E9%9D%A2%E7%BB%8F%EF%BC%89/"/>
+    <url>/2021/03/31/2021%E5%B9%B43%E6%9C%88%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95%EF%BC%88%E5%AE%9E%E4%B9%A0%E9%9D%A2%E7%BB%8F%EF%BC%89/</url>
+    
+    <content type="html"><![CDATA[<h1 id="2021年3月踩坑记录（实习面经）"><a href="#2021年3月踩坑记录（实习面经）" class="headerlink" title="2021年3月踩坑记录（实习面经）"></a>2021年3月踩坑记录（实习面经）</h1><p>部分题目写了答案，仅供参考，希望对同样在准备实习的小伙伴们有些帮助 🏃‍♂️🏃‍♀️ ，希望每次踩坑都能从中汲取经验和教训 💖  8说了，肝去了🤦‍♂️</p><span id="more"></span><h2 id="3-19-腾讯后端实习一面"><a href="#3-19-腾讯后端实习一面" class="headerlink" title="3.19 腾讯后端实习一面"></a>3.19 腾讯后端实习一面</h2><ol><li><p>自我介绍</p></li><li><p>Redis哪几种数据类型？Redis底层数据类型实现？项目中Redis的作用？项目中Redis如何存储数据？</p></li><li><p>GC机制</p></li><li><p>操作系统中进程和线程的区别？</p></li><li><p>操作系统中的资源的定义？</p></li><li><p>操作系统进程间通信（管道，共享内存，信号量，消息队列，套接字）</p></li><li><p>各种排序算法的时间复杂度</p></li><li><p>项目中的收获</p></li><li><p>前后端分离时前后端怎样交互？Nginx怎么转发请求给后端？</p></li><li><p>MySQL存储引擎Innodb和MyISAM的区别？只回答了MyISAM存储引擎不支持事务，InnoDB支持事务</p><blockquote><p> Innodb 是默认使用的数据库引擎，MyISAM 是mysql早些年使用的存储引擎</p></blockquote><table><thead><tr><th>功能</th><th>MyISAM</th><th>InnoDB</th></tr></thead><tbody><tr><td>事务支持</td><td>不支持</td><td>支持</td></tr><tr><td>数据行锁定</td><td>不支持</td><td>支持</td></tr><tr><td>外键约束</td><td>不支持</td><td>支持</td></tr><tr><td>全文索引</td><td>支持</td><td>不支持</td></tr><tr><td>表空间大小</td><td>较小</td><td>较大</td></tr></tbody></table><blockquote><p> 常规使用情况：</p></blockquote><ul><li>MyISAM：节约空间，速度较快</li><li>InnoDB：  安全性高，支持事务，多表多用户操作</li></ul></li><li><p>MySQL索引的数据结构</p></li><li><p>TCP三次握手四次挥手</p></li><li><p>知道DNS吗？正在学，没有问</p></li></ol><h2 id="3-23-腾讯前端实习一面"><a href="#3-23-腾讯前端实习一面" class="headerlink" title="3.23 腾讯前端实习一面"></a>3.23 腾讯前端实习一面</h2><ol><li>自我介绍</li><li>问项目 小程序的作用（是简单展示页面还是有数据操作） 有使用什么框架吗？</li><li>js有哪些数据类型？基本+引用</li></ol><blockquote><p>**值类型(基本类型)**：字符串（String）、数字(Number)、布尔(Boolean)、对空（Null）、未定义（Undefined）、Symbol。</p><p><strong>引用数据类型</strong>：对象(Object)、数组(Array)、函数(Function)。</p><p>js的数据类型是动态的 相同的变量可以用作不同的类型</p><p>JavaScript 只有一种数字类型。数字可以带小数点，也可以不带</p></blockquote><ol start="4"><li>作用域和作用域链 <a href="https://blog.csdn.net/qq_39903567/article/details/115069564">https://blog.csdn.net/qq_39903567/article/details/115069564</a></li></ol><blockquote><p><strong>作用域</strong>：变量或者函数能作用的范围</p><p><strong>全局作用域</strong>： 除了函数中定义的变量之外都是全局作用域</p><p><strong>函数作用域</strong>：函数内部声明的一些语句或者变量，只在当前函数内部起作用</p><p><strong>块级作用域</strong>： ES6带来的新特性，在语句块中声明的语句或变量只在当前语句块中起作用</p><p><strong>作用域链</strong>： 当查找变量的时候，会先从当前作用域的变量对象中查找，如果没有找到，就会从父级作用域(上层环境)的变量对象中查找，一直找到全局作用域的变量对象，也就是全局对象。这样由多个作用域的变量对象构成的链表就叫做作用域链。它由当前环境与上层环境的一系列变量对象组成，保证了当前执行环境对符合访问权限的变量和函数的有序访问。</p></blockquote><ol start="5"><li>JS创建对象时的流程  <a href="https://blog.csdn.net/neokekeke/article/details/79394197">https://blog.csdn.net/neokekeke/article/details/79394197</a></li></ol><blockquote><ol><li>构造函数在内存中创建一个空对象</li><li>this指向刚才创建的空对象</li><li>执行构造函数中的代码，给空对象添加属性和方法</li><li>返回这个对象</li></ol></blockquote><ol start="6"><li>React的生命周期函数有哪几个  <a href="https://blog.csdn.net/weixin_43851769/article/details/88188325">https://blog.csdn.net/weixin_43851769/article/details/88188325</a></li></ol><blockquote><ul><li>组件将要挂载时触发的函数：componentWillMount</li><li>组件挂载完成时触发的函数：componentDidMount</li><li>是否要更新数据时触发的函数：shouldComponentUpdate</li><li>将要更新数据时触发的函数：componentWillUpdate</li><li>数据更新完成时触发的函数：componentDidUpdate</li><li>组件将要销毁时触发的函数：componentWillUnmount</li><li>父组件中改变了props传值时触发的函数：componentWillReceiveProps</li></ul></blockquote><ol start="7"><li><p>http和https的区别</p></li><li><p>TCP三次握手四次挥手</p></li><li><p>TCP和UDP的区别</p></li><li><p>把一个元素居中有哪几种方法  <a href="https://zhuanlan.zhihu.com/p/62174465">https://zhuanlan.zhihu.com/p/62174465</a></p></li><li><p>讲一讲css的盒子布局</p></li><li><p>一道算法题： 使用两个非空链表来表示两个非负整数。数字最高位位于链表开始位置，他们的每个节点只存储一位数字，将这两个数相加会返回一个新的链表</p></li><li><p>反问</p></li></ol><h2 id="3-30-字节测开实习一面"><a href="#3-30-字节测开实习一面" class="headerlink" title="3.30 字节测开实习一面"></a>3.30 字节测开实习一面</h2><ol><li><p>先问能实习多久  岗位要求的是至少三个月</p></li><li><p>自我介绍</p></li><li><p>一道算法题</p></li><li><p>面向对象三大特性封装继承多态都是什么意思</p></li><li><p>使用多态的好处</p></li><li><p>进程和线程区别</p></li><li><p>死锁是什么</p></li><li><p>Java的内存模型了解过吗</p></li><li><p>HTTP有哪些请求方式（GET POST那些）（表格数据摘自菜鸟教程）</p><p> 根据 HTTP 标准，HTTP 请求可以使用多种请求方法。</p><p> HTTP1.0 定义了三种请求方法： GET, POST 和 HEAD方法。</p><p> HTTP1.1 新增了六种请求方法：OPTIONS、PUT、PATCH、DELETE、TRACE 和 CONNECT 方法</p><table><thead><tr><th align="left">序号</th><th align="left">方法</th><th align="left">描述</th></tr></thead><tbody><tr><td align="left">1</td><td align="left">GET</td><td align="left">请求指定的页面信息，并返回实体主体。</td></tr><tr><td align="left">2</td><td align="left">HEAD</td><td align="left">类似于 GET 请求，只不过返回的响应中没有具体的内容，用于获取报头</td></tr><tr><td align="left">3</td><td align="left">POST</td><td align="left">向指定资源提交数据进行处理请求（例如提交表单或者上传文件）。数据被包含在请求体中。POST 请求可能会导致新的资源的建立和/或已有资源的修改。</td></tr><tr><td align="left">4</td><td align="left">PUT</td><td align="left">从客户端向服务器传送的数据取代指定的文档的内容。</td></tr><tr><td align="left">5</td><td align="left">DELETE</td><td align="left">请求服务器删除指定的页面。</td></tr><tr><td align="left">6</td><td align="left">CONNECT</td><td align="left">HTTP/1.1 协议中预留给能够将连接改为管道方式的代理服务器。</td></tr><tr><td align="left">7</td><td align="left">OPTIONS</td><td align="left">允许客户端查看服务器的性能。</td></tr><tr><td align="left">8</td><td align="left">TRACE</td><td align="left">回显服务器收到的请求，主要用于测试或诊断。</td></tr><tr><td align="left">9</td><td align="left">PATCH</td><td align="left">是对 PUT 方法的补充，用来对已知资源进行局部更新 。</td></tr></tbody></table></li><li><p>GET和POST区别（参数携带 安全性方面）</p></li><li><p>HTTP 和HTTPS的区别</p></li><li><p>Java注解的底层了解吗  怎么实现的</p></li><li><p>JAVA注解的使用（在项目中是怎么用的）</p></li><li><p>项目介绍</p></li><li><p>项目开发中有遇到的问题以及怎样解决的</p></li><li><p>项目开发中有遇到协作方面的问题吗 </p></li><li><p>通过项目你有什么收获吗</p></li><li><p>Java有哪些数据类型</p></li><li><p>Java的容器类都有哪些</p></li><li><p>ArrayList和LinkedList的区别</p></li><li><p>反问</p></li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>实习</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>面试</tag>
+      
+      <tag>实习</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Redis学习(5)-Redis缓存穿透和雪崩</title>
     <link href="/2021/03/27/Redis%E5%AD%A6%E4%B9%A0(5)-Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E5%92%8C%E9%9B%AA%E5%B4%A9%EF%BC%88%E9%9D%A2%E8%AF%95%EF%BC%89/"/>
     <url>/2021/03/27/Redis%E5%AD%A6%E4%B9%A0(5)-Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E5%92%8C%E9%9B%AA%E5%B4%A9%EF%BC%88%E9%9D%A2%E8%AF%95%EF%BC%89/</url>
