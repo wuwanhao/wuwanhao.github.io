@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>JVM学习笔记01-JVM体系结构和双亲委派机制</title>
+    <link href="/2021/04/07/JVM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001-JVM%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"/>
+    <url>/2021/04/07/JVM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001-JVM%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
+    
+    <content type="html"><![CDATA[<h1 id="JVM学习笔记01-JVM体系结构和双亲委派机制"><a href="#JVM学习笔记01-JVM体系结构和双亲委派机制" class="headerlink" title="JVM学习笔记01-JVM体系结构和双亲委派机制"></a>JVM学习笔记01-JVM体系结构和双亲委派机制</h1><h2 id="JVM生命周期"><a href="#JVM生命周期" class="headerlink" title="JVM生命周期"></a>JVM生命周期</h2><h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><p>Java虚拟机的启动是由引导类加载器创建的一个初始类来完成的</p><p>一个运行中的JVM的任务就是执行java程序</p><h3 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h3><p>程序开始时它执行，程序结束时他结束</p><p><code>JPS</code>命令输出当前正在执行的Java进程</p><p>执行一个所谓的Java程序的时候，真正在执行的是一个叫做Java虚拟机的进程</p><h3 id="退出"><a href="#退出" class="headerlink" title="退出"></a>退出</h3><ul><li>正常执行结束</li><li>出现异常而终止</li><li>OS出现错误导致JVM终止</li><li>代码中主动结束JVM的执行</li><li>JNI规范中描述的使用JNI的API加载或卸载JVM</li></ul><h2 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h2><blockquote><p>JVM的位置</p></blockquote><p>JVM 处于操作系统和 Java 程序之间（处于JRE中，JRE中包含了JVM）</p><blockquote><p>JVM的体系结构</p></blockquote><p><img src="https://p9-tt.byteimg.com/origin/pgc-image/073de855752a4d04a8d42ff62683b5c3.png" alt="image-20210402195728211.png"></p><p><strong>方法区和堆中会存在垃圾回收（GC）</strong>，而虚拟机栈、本地方法栈和程序计数器中不会存在垃圾回收（GC），因为它们不会产生垃圾</p><h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p><img src="https://p26-tt.byteimg.com/origin/pgc-image/f3f6ccd3e56b437ea864f8b47c1a8535.png" alt="image-20210402205341879.png"></p><blockquote><p>作用</p></blockquote><p>加载class文件</p><blockquote><p>分类</p></blockquote><h4 id="BootstrapClassLoader（启动类加载器）"><a href="#BootstrapClassLoader（启动类加载器）" class="headerlink" title="BootstrapClassLoader（启动类加载器）"></a>BootstrapClassLoader（启动类加载器）</h4><p><code>c++</code>编写，加载<code>java</code>核心库 <code>java.*</code>,构造<code>ExtClassLoader</code>和<code>AppClassLoader</code>。由于引导类加载器涉及到虚拟机本地实现细节，开发者无法直接获取到启动类加载器的引用，所以不允许直接通过引用进行操作</p><h4 id="ExtClassLoader-（标准扩展类加载器）"><a href="#ExtClassLoader-（标准扩展类加载器）" class="headerlink" title="ExtClassLoader （标准扩展类加载器）"></a>ExtClassLoader （标准扩展类加载器）</h4><p><code>java</code>编写，加载扩展库，如<code>classpath</code>中的<code>jre</code> ，<code>javax.*</code>或者<br> <code>java.ext.dir</code> 指定位置中的类，开发者可以直接使用标准扩展类加载器。</p><h4 id="AppClassLoader（系统类加载器）"><a href="#AppClassLoader（系统类加载器）" class="headerlink" title="AppClassLoader（系统类加载器）"></a>AppClassLoader（系统类加载器）</h4><figure class="highlight autohotkey"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs autohotkey">java`编写，加载程序所在的目录，如`user.dir`所在的位置的`class<br></code></pre></div></td></tr></table></figure><h4 id="CustomClassLoader（用户自定义类加载器）"><a href="#CustomClassLoader（用户自定义类加载器）" class="headerlink" title="CustomClassLoader（用户自定义类加载器）"></a>CustomClassLoader（用户自定义类加载器）</h4><p><code>java</code>编写,用户自定义的类加载器,可加载指定路径的<code>class</code>文件</p><h2 id="双亲委派机制"><a href="#双亲委派机制" class="headerlink" title="双亲委派机制"></a>双亲委派机制</h2><p>双亲委派机制 <a href="https://blog.csdn.net/codeyanbao/article/details/82875064">https://blog.csdn.net/codeyanbao/article/details/82875064</a> </p><ol><li>类加载器收到类加载请求，</li><li>将这个请求向上委托给父类加载器去完成，一直向上委托，知道委托给启动类加载器。</li><li>启动类加载器检查是否能够加载当前这个类，能加载就结束，使用当前的加载器，否则，抛出异常，通知子加载器进行加载</li><li>重复步骤3</li></ol><h2 id="双亲委派机制的作用"><a href="#双亲委派机制的作用" class="headerlink" title="双亲委派机制的作用"></a>双亲委派机制的作用</h2><ol><li>防止重复加载同一个<code>.class</code>。通过委托去向上面问一问，加载过了，就不用再加载一遍。保证数据安全。</li><li>保证核心<code>.class</code>不能被篡改。通过委托方式，不会去篡改核心<code>.class</code>，即使篡改也不会去加载，即使加载也不会是同一个<code>.class</code>对象了。不同的加载器加载同一个<code>.class</code>也不是同一个<code>Class</code>对象。这样保证了<code>Class</code>执行安全。</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>JVM</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>JVM</tag>
+      
+      <tag>Java</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>重学Java(1) - Java注解和反射</title>
     <link href="/2021/04/01/%E9%87%8D%E5%AD%A6Java(1)%20-%20Java%E6%B3%A8%E8%A7%A3%E5%92%8C%E5%8F%8D%E5%B0%84/"/>
     <url>/2021/04/01/%E9%87%8D%E5%AD%A6Java(1)%20-%20Java%E6%B3%A8%E8%A7%A3%E5%92%8C%E5%8F%8D%E5%B0%84/</url>
