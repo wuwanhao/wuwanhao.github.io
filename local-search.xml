@@ -31,6 +31,33 @@
   
   
   <entry>
+    <title>5.31字节核心广告部门测试开发实习生一面凉经45mins</title>
+    <link href="/2021/04/09/2020%E5%B9%B45%E6%9C%8831%E6%97%A5%E5%AD%97%E8%8A%82%E6%A0%B8%E5%BF%83%E5%B9%BF%E5%91%8A%E9%83%A8%E9%97%A8%E6%B5%8B%E5%BC%80%E5%AE%9E%E4%B9%A0%E4%B8%80%E9%9D%A2%EF%BC%8845mins%EF%BC%89/"/>
+    <url>/2021/04/09/2020%E5%B9%B45%E6%9C%8831%E6%97%A5%E5%AD%97%E8%8A%82%E6%A0%B8%E5%BF%83%E5%B9%BF%E5%91%8A%E9%83%A8%E9%97%A8%E6%B5%8B%E5%BC%80%E5%AE%9E%E4%B9%A0%E4%B8%80%E9%9D%A2%EF%BC%8845mins%EF%BC%89/</url>
+    
+    <content type="html"><![CDATA[<h1 id="5-31字节核心广告部门测试开发实习生一面凉经45mins"><a href="#5-31字节核心广告部门测试开发实习生一面凉经45mins" class="headerlink" title="5.31字节核心广告部门测试开发实习生一面凉经45mins"></a>5.31字节核心广告部门测试开发实习生一面凉经45mins</h1><span id="more"></span><h2 id="面试内容"><a href="#面试内容" class="headerlink" title="面试内容"></a>面试内容</h2><ol><li>自我介绍</li><li>介绍项目 在项目中做了哪些工作</li><li>看你项目中用了Redis和MySQL，讲讲Redis的持久化有哪几种方式？（AOF和RDB）</li><li>MySQL把A表数据复制到B表</li><li>浏览器从输入URL到页面展示的过程</li><li>计算机网络了解过吧？讲讲TCP拥塞控制（慢开始，拥塞避免，快重传、快恢复）</li><li>就拿咱们面试的这个直播间来说，我们是怎样彼此连接的呢？经过路由器  NAT </li><li>操作系统学过吧，什么是进程？</li><li>操作系统是怎么样调度进程的呢？</li><li>操作系统内核态跟用户态的区别？</li><li>console.info(0.1+0.7）会输出什么？</li><li>Java创建多线程的几种方式？</li><li>有什么区别？</li><li>学过Java吧？Java的线程通信机制是怎样的呢？（回答了Synchronized和Lock的Condition）</li><li>Java的接口和抽象类的区别</li><li>讲讲深拷贝和浅拷贝？为什么浅拷贝源对象改变了新对象也会改变？</li><li>算法题</li><li>对测试开发的理解，手机淘宝的购物车你能想到哪些测试点呢？</li><li>反问</li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>实习</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>面试</tag>
+      
+      <tag>实习</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>JVM学习笔记01-JVM体系结构和双亲委派机制</title>
     <link href="/2021/04/07/JVM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001-JVM%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"/>
     <url>/2021/04/07/JVM%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001-JVM%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
