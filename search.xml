@@ -1,9 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>demo</title>
+    <title>Go函数选项模式</title>
     <url>/2024/10/16/demo/</url>
-    <content><![CDATA[<p>测试</p>
+    <content><![CDATA[<p>接受零个或多个函数作为结构体的可变构造函数来构造复杂的结构体<br>一般情况<br>先来一个简单例子，这个Animal结构体，怎么构造出一个实例对象</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Animal <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name   <span class="type">string</span></span><br><span class="line">    Age    <span class="type">int</span></span><br><span class="line">    Height <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通常的写法：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewAnimal</span><span class="params">(name <span class="type">string</span>, age <span class="type">int</span>, height <span class="type">int</span>)</span></span> *Animal &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Animal&#123;</span><br><span class="line">        Name:   name,</span><br><span class="line">        Age:    age,</span><br><span class="line">        Height: height,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">a1 := NewAnimal(<span class="string">&quot;小白兔&quot;</span>, <span class="number">5</span>, <span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+<p>简单易懂，结构体有哪些属性字段，那么构造函数的参数，就相应做定义并传入<br>带来的问题：</p>
+<ol>
+<li>代码耦合度高：加属性字段，构造函数就得相应做修改，调用的地方全部都得改，势必会影响现有代码；</li>
+<li>代码灵活度低：属性字段不能指定默认值，每次都得明确传入；</li>
+</ol>
+<p>例如，现计划新加3个字段Weight体重、CanRun是否会跑、LegNum几条腿，同时要指定默认值CanRun&#x3D;true、LegNum&#x3D;4<br>新结构体定义：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Animal <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name   <span class="type">string</span></span><br><span class="line">    Age    <span class="type">int</span></span><br><span class="line">    Height <span class="type">int</span></span><br><span class="line">    Weight <span class="type">int</span></span><br><span class="line">    CanRun <span class="type">bool</span></span><br><span class="line">    LegNum <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码实现（函数加新参数定义，但默认值貌似实现不了，得调用构造函数时，明确传入）：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewAnimal</span><span class="params">(name <span class="type">string</span>, age <span class="type">int</span>, height <span class="type">int</span>, weight <span class="type">int</span>, canRun <span class="type">bool</span>, legNum <span class="type">int</span>)</span></span> *Animal &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;Animal&#123;</span><br><span class="line">        Name:   name,</span><br><span class="line">        Age:    age,</span><br><span class="line">        Height: height,</span><br><span class="line">        Weight: weight,</span><br><span class="line">        CanRun: canRun,</span><br><span class="line">        LegNum: legNum,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">a1 := NewAnimal(<span class="string">&quot;小白兔&quot;</span>, <span class="number">5</span>, <span class="number">100</span>, <span class="number">120</span>, <span class="literal">true</span>, <span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<p>后续逐步加新字段，这个构造函数就会被撑爆了，如果调用的地方越多，那么越伤筋动骨。<br>高阶水平<br>既然常规写法太low，难以实现新需求，那么我们就来玩点高阶的，引出主题：函数选项模式<br>首先，需要先定义一个函数类型OptionFunc</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> OptionFunc <span class="function"><span class="keyword">func</span><span class="params">(*Animal)</span></span></span><br></pre></td></tr></table></figure>
+<p>然后，根据新结构体字段，定义With开头的函数，返回函数类型为OptionFunc的闭包函数，内部逻辑只需要实现更新对应字段值即可</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithName</span><span class="params">(name <span class="type">string</span>)</span></span> OptionFunc &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(a *Animal)</span></span> &#123; a.Name = name &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithAge</span><span class="params">(age <span class="type">int</span>)</span></span> OptionFunc &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(a *Animal)</span></span> &#123; a.Age = age &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithHeight</span><span class="params">(height <span class="type">int</span>)</span></span> OptionFunc &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(a *Animal)</span></span> &#123; a.Height = height &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithWeight</span><span class="params">(weight <span class="type">int</span>)</span></span> OptionFunc &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(a *Animal)</span></span> &#123; a.Weight = weight &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithCanRun</span><span class="params">(canRun <span class="type">bool</span>)</span></span> OptionFunc &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(a *Animal)</span></span> &#123; a.CanRun = canRun &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithLegNum</span><span class="params">(legNum <span class="type">int</span>)</span></span> OptionFunc &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(a *Animal)</span></span> &#123; a.LegNum = legNum &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再然后，优化构造函数的定义和实现（name作为必传参数，其他可选，并且实现CanRun和LegNum两个字段指定默认值）</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewAnimal</span><span class="params">(name <span class="type">string</span>, opts ...OptionFunc)</span></span> *Animal &#123;</span><br><span class="line">    a := &amp;Animal&#123;Name: name, CanRun: <span class="literal">true</span>, LegNum: <span class="number">4</span>&#125;</span><br><span class="line">    <span class="keyword">for</span> _, opt := <span class="keyword">range</span> opts &#123;</span><br><span class="line">        opt(a)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> a</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后，调用优化后的构造函数，快速实现实例的初始化。想要指定哪个字段值，那就调用相应的With开头的函数，完全做到可配置化、可插拔；不指定还支持了默认值</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">a2 := NewAnimal(<span class="string">&quot;大黄狗&quot;</span>, WithAge(<span class="number">10</span>), WithHeight(<span class="number">120</span>))</span><br><span class="line">fmt.Println(a2)</span><br><span class="line">a3 := NewAnimal(<span class="string">&quot;大灰狼&quot;</span>, WithHeight(<span class="number">200</span>))</span><br><span class="line">fmt.Println(a3)</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">&amp;&#123;大黄狗 10 120 0 true 4&#125;</span><br><span class="line">&amp;&#123;大灰狼 0 200 0 true 4&#125;</span><br></pre></td></tr></table></figure>
+<p>带来的好处：</p>
+<ol>
+<li>高度的可配置化、可插拔，还支持默认值设定；</li>
+<li>很容易维护和扩展；</li>
+<li>容易上手，大幅降低新来的人试错成本；</li>
+</ol>
+<p>具体用法</p>
+<ol>
+<li>使用 Options 结构体，定义出 主结构体 需要使用到的所有配置文件</li>
+<li>定义一系列函数作为选项，对配置字段做初始化设置（如上的示例中：Weight int   CanRun bool LegNum int</li>
+<li>构造函数里初始化一个 主结构体对象，并根据传入的函数选项，进行配置字段的更新，最终返回这个对象</li>
+<li>获取到对应的主结构体实例对象，执行后续操作</li>
+</ol>
 ]]></content>
   </entry>
   <entry>
